@@ -1,5 +1,6 @@
 # Helper file containing useful functions and classes for glare detection notebook
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import torch
 
@@ -46,6 +47,7 @@ def performance(model, dataloader, uncertainty = 0.7):
     fp = []
     fn = []
     uncertain = []
+    model.eval()
     # Iterate over all images in dataloader
     for images, labels in dataloader:
 
@@ -58,11 +60,53 @@ def performance(model, dataloader, uncertainty = 0.7):
         for i in range(len(top_class)):
             if top_class[i] != labels[i]:
                 if top_class[i] == 0:
-                    fn += [(images[i], top_p[i])]
+                    fn += [(images[i], top_p[i].item())]
                 else:
-                    fp += [(images[i], top_p[i])]
+                    fp += [(images[i], top_p[i].item())]
             elif top_p[i] < 0.7:
-                uncertain += [(images[i], top_class[i], top_p[i])]
+                uncertain += [(images[i], top_class[i].item(), top_p[i].item())]
 
 
     return conf, fp, fn, uncertain
+
+
+
+def display(fp, fn, uncertain, normalization = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]), certainty = 0.7):
+    """
+    Displays images from the output of the performance funciton
+
+    Returns
+        matlplotlib subplots of images
+    """
+    
+    keys = {0: 'flare', 1: 'good'}
+    width = max([len(fp), len(fn), len(uncertain)])
+    f, ax = plt.subplots(3, width + 1, figsize = (width * 5, 9))
+
+    ax[0,0].text(0, 0.5, f'{len(fp)} false positives:')
+    ax[1,0].text(0, 0.5, f'{len(fn)} false negatives:')
+    ax[2,0].text(0, 0.5, f'{len(uncertain)} instances of certainty < {certainty}:')
+
+    ax[0,0].set_axis_off()
+    ax[1,0].set_axis_off()
+    ax[2,0].set_axis_off()
+    unorm = UnNormalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+
+    for i in range(width):
+        ax[0,i+1].set_axis_off()
+        ax[1,i+1].set_axis_off()
+        ax[2,i+1].set_axis_off()
+
+        if len(fp) > i:
+            ax[0,i+1].imshow(unorm(fp[i][0].clone()).numpy().transpose((1, 2, 0)))
+            ax[0,i+1].set_title(f'Predicted {fp[i][1]:.3f} chance good')
+
+        if len(fn) > i:
+            ax[1,i+1].imshow(unorm(fn[i][0].clone()).numpy().transpose((1, 2, 0)))
+            ax[1,i+1].set_title(f'Predicted {fn[i][1]:.3f} chance flare')
+
+        if len(uncertain) > i:
+            ax[2,i+1].imshow(unorm(uncertain[i][0].clone()).numpy().transpose((1, 2, 0)))
+            ax[2,i+1].set_title(f'{uncertain[i][2]:.3f} certainty {keys[uncertain[i][1]]}')
+
+    plt.show()
