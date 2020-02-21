@@ -1,5 +1,5 @@
 # Helper file containing useful functions and classes for glare detection notebook
-
+import numpy as np
 
 class UnNormalize(object):
     def __init__(self, mean, std):
@@ -19,4 +19,4 @@ class UnNormalize(object):
             for t, m, s in zip(image, self.mean, self.std):
                 t.mul_(s).add_(m)
                 # The normalize code -> t.sub_(m).div_(s)
-        return tensor
+        return np.squeeze(tensor)   
