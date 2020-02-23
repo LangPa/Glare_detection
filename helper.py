@@ -16,6 +16,7 @@ class UnNormalize(object):
         Returns:
             Tensor: Normalized image.
         """
+        tensor = tensor.clone()
         if len(tensor.shape) == 3:
             tensor = tensor.unsqueeze(0)
         for image in tensor:
@@ -79,7 +80,7 @@ def display(fp, fn, uncertain, normalization = ([0.485, 0.456, 0.406], [0.229, 0
         matlplotlib subplots of images
     """
     
-    keys = {0: 'flare', 1: 'good'}
+    keys = {1: 'flare', 0: 'good'}
     width = max([len(fp), len(fn), len(uncertain)])
     f, ax = plt.subplots(3, width + 1, figsize = (width * 5, 9))
 
@@ -99,11 +100,11 @@ def display(fp, fn, uncertain, normalization = ([0.485, 0.456, 0.406], [0.229, 0
 
         if len(fp) > i:
             ax[0,i+1].imshow(unorm(fp[i][0].clone()).numpy().transpose((1, 2, 0)))
-            ax[0,i+1].set_title(f'Predicted {fp[i][1]:.3f} chance good')
+            ax[0,i+1].set_title(f'Predicted {fp[i][1]:.3f} chance flare')
 
         if len(fn) > i:
             ax[1,i+1].imshow(unorm(fn[i][0].clone()).numpy().transpose((1, 2, 0)))
-            ax[1,i+1].set_title(f'Predicted {fn[i][1]:.3f} chance flare')
+            ax[1,i+1].set_title(f'Predicted {fn[i][1]:.3f} chance good')
 
         if len(uncertain) > i:
             ax[2,i+1].imshow(unorm(uncertain[i][0].clone()).numpy().transpose((1, 2, 0)))
