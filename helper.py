@@ -99,11 +99,11 @@ def display(fp, fn, uncertain, normalization = ([0.485, 0.456, 0.406], [0.229, 0
         ax[2,i+1].set_axis_off()
 
         if len(fp) > i:
-            ax[0,i+1].imshow(unorm(fp[i][0].clone()).numpy().transpose((1, 2, 0)))
+            ax[0,i+1].imshow(unorm(fp[i][0]).numpy().transpose((1, 2, 0)))
             ax[0,i+1].set_title(f'Predicted {fp[i][1]:.3f} chance flare')
 
         if len(fn) > i:
-            ax[1,i+1].imshow(unorm(fn[i][0].clone()).numpy().transpose((1, 2, 0)))
+            ax[1,i+1].imshow(unorm(fn[i][0]).numpy().transpose((1, 2, 0)))
             ax[1,i+1].set_title(f'Predicted {fn[i][1]:.3f} chance good')
 
         if len(uncertain) > i:
