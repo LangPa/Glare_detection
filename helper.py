@@ -56,9 +56,14 @@ def performance(model, dataloader, uncertainty = 0.7):
         ps = torch.exp(model(images))
         top_p, top_class = ps.topk(1, dim = 1)
 
-        conf += confusion_matrix(labels.numpy(), top_class.view(*labels.shape).numpy())
+        conf += confusion_matrix(labels.numpy(), top_class.view(*labels.shape).numpy(), labels = [0,1])
+        # print(confusion_matrix(labels.numpy(), top_class.view(*labels.shape).numpy(), labels = [0,1]))
 
         for i in range(len(top_class)):
+            if labels[i].item() == 1:
+                continue
+            print(top_class[i].item(), top_p[i].item())
+            # print(top_class[i] == labels[i], top_p[i])
             if top_class[i] != labels[i]:
                 if top_class[i] == 0:
                     fn += [(images[i], top_p[i].item())]
