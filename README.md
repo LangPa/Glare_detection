@@ -48,7 +48,7 @@ The data was then normalised and split into a training and validating subsets.
 - If there is an improvement on the validation loss, the model is saved.
 - The above steps are repeated for a given (30) number of epochs.
 
-## Results
+## Training and Validating Perfromance 
 
 The validation dataset was used in order to prevent overfitting the model on the dataset. When there is no longer a decrease in the validation loss its best to stop training the model. We can see how the validation loss compared to the training loss over the 30 epochs: 
 
@@ -57,7 +57,9 @@ The validation dataset was used in order to prevent overfitting the model on the
 The loss had began to plateau so it was best to stop the training at, in this case, epoch 29. The final training and validation negative log losses were 0.23 and 0.09 respectively, a vast improvement on the initial model. Overall the model only classified 1 false negative and 1 false positive across the training and validating dataset, with all but two of the correct classifications above 70% certainty. *To see the images have a look in the Jupyter notebook*
 
 
+## Final Results
 
+Abyss Solutions were kind enough to send me their testing data for the final evaluation. The model managed to classify to a 91.6% accuracy with only two instances of false positives.
 
 ## Future Ideas for Glare removal
 
